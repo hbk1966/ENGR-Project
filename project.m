@@ -13,7 +13,7 @@ material = materialList(choice,:);
 surfaceArea = 3000;
 
 ftToIn = 12;
-yrToMonth = 4;
+yearToMonth = 4;
 
 materialName = material{1};
 wallThickness = material{2};
