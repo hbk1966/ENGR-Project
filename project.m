@@ -75,7 +75,7 @@ plot(breakevenX, breakevenY, 'k.', 'MarkerSize', 20);
 
 title('Cost/Revenue Chart');
 xlabel('Years');
-ylabel('$ millions');
+ylabel('$ Millions');
 grid on;
 
 legend({'Total Cost','Revenue'},'Location','Best');
