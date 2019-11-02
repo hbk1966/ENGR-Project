@@ -63,10 +63,10 @@ energyCost = input('Energy cost [$/week]: ');
 laborCost = input('Labor cost [$/week]: ');
 maintenanceCost = input('Maintence cost [$/week]: ');
 landfillCost = input('Landfill cost [$/week]: ');
-weeksOpen = input('Number of weeks open a year: ');
-analysisLength = input('Number of years for analysis: ');
+weeksOpen = input('Number of weeks open a year [weeks/year]: ');
+analysisLength = input('Number of years for analysis [years]: ');
 ticketPrice = input('Price of admission per person [$/person]: ');
-weeklyVisitors = input('Number of customers per week: ');
+weeklyVisitors = input('Number of customers per week [customers/week]: ');
 weeklyDonations = input('Expected donations [$/week]: ');
 
 % Calculations for construction variables using Baseline information and user input
@@ -86,7 +86,7 @@ breakevenDonation = constructionCost - ((weeklyRevenue - weeklyCost) * yearToMon
 
 % Outputing the results for review
 clc % clean the command window to show only results
-fprintf('Material: %s\n\n', materialName); 
+fprintf('Material: %s\n', materialName); 
 fprintf('\t Operating %0.0f weeks per year will generate:\n',weeksOpen);
 fprintf('\t \t Revenue: \t $%0.0f per year\n', weeklyRevenue);
 fprintf('\t \t Cost: \t \t $%0.0f per year\n', weeklyCost);
@@ -97,9 +97,11 @@ fprintf('It will take a one-time donation of $%0.2f to breakeven in seven months
 % Preparing the Charts
 % Setting the line to be used for total cost
 wallTotalCost = (constructionCost) + costChart;
+
 % calculating the slope for the lines
 costSlope = (wallTotalCost(end)-wallTotalCost(1))/(analysisLength);
 revenueSlope = (revenueChart(end)-revenueChart(1))/(analysisLength);
+
 % calculating the breakeven point position
 breakevenX = constructionCost/(revenueSlope-costSlope);
 breakevenY = (revenueSlope*breakevenX);
@@ -114,22 +116,25 @@ title('Cost/Revenue Chart');
 xlabel('Years');
 ylabel('$ Millions');
 grid on; % showing gridlines
-legend({'Total Cost','Revenue'},'Location','Best'); % placing the legend
+legend({'Total Cost','Revenue','Breakeven Point'},'Location','Best'); % placing the legend
 hold off;
+
 % adding the second plot as a figure
 figure;
 profitSlope = revenueSlope-costSlope; % setting the slope
+
 % calculating the breakeven point for this figure
-projectBreakevenX = constructionCost/(profitSlope); 
-projectBreakevenY = profitSlope*projectBreakevenX;
+profitBreakevenY = profitSlope*breakevenX;
+
 % plotting the data
 plot(yearsRequested, profitChart);
 hold on; % keep first plot for this figure for the following
-plot(projectBreakevenX, projectBreakevenY, 'k.', 'MarkerSize', 20);
+plot(breakevenX, profitBreakevenY, 'k.', 'MarkerSize', 20);
 hold off;
+
 % Labeling the plotted data
 title('Profit vs Time');
 xlabel('Years');
 ylabel('$ Millions');
 grid on; % showing gridlines
-legend({'Profit'},'Location','Best'); % placing the legend
+legend({'Profit', 'Breakeven Point'},'Location','northwest'); % placing the legend
