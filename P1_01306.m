@@ -44,11 +44,11 @@ weeklyDonations = Amount of estimated donations (USD/week)
 weeklyRevenue = Total revenue (USD/week)
 weeklyVisitors = Number of visitors per week (customers/week)
 weeksOpen = Number of weeks a year the zoo is open (weeks/year)
+weekToMonth = Conversion factor for weeks to months (-)
 workerCost = Total cost of labor to complete construction (USD)
 workerCount = Number of workers needed to complete construction (workers)
 workerPay = Amount the workers get paid (USD/week)
 yearsRequested = Number of years the analysis will run for (years)
-yearToMonth = Conversion factor for years to months (-)
 %} 
 
 % Baseline information
@@ -64,7 +64,7 @@ surfaceArea = 3000; % Predifined value for surface area
 
 % Conversion Factors
 ftToIn = 12;
-yearToMonth = 4;
+weekToMonth = 4;
 
 % Defining Baseline information
 materialName = material{1};
@@ -99,8 +99,8 @@ revenueChart = (weeklyRevenue * weeksOpen * yearsRequested);
 profitChart = revenueChart - costChart;
 
 % Calculating Breakeven points through profit alone or by donations
-breakevenOne = (constructionCost / (weeklyRevenue - weeklyCost) / yearToMonth);
-breakevenDonation = constructionCost - ((weeklyRevenue - weeklyCost) * yearToMonth * 7);
+breakevenOne = (constructionCost / (weeklyRevenue - weeklyCost) / weekToMonth);
+breakevenDonation = constructionCost - ((weeklyRevenue - weeklyCost) * weekToMonth * 7);
 
 % Outputing the results for review
 clc % clean the command window to show only results
