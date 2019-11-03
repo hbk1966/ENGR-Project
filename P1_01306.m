@@ -9,29 +9,45 @@ close all;
 %{ 
 Variables
 analysisLength = length of analysis asked for(years)
-breakeven = time until profit = cost (weeks)
-breakevenDonation = amount of donation funds to break even (USD)
+breakevenOne = time until profit eqals cost (months)
+breakevenDonation = amount of donated funds to break even (USD)
+breakevenX = location of breakeven point on X-axis for breakeven chart (-)
+breakevenY = location of breakeven point on Y-axis for breakeven chart (-)
+choice = numerical location of menu choice from array (-)
 constructionCost = cost of all construction needs (USD)
 constructionTime = time until construction is complete (weeks)
-costChart = costs to run over time (USD/week)
+costChart = array of costs to run over time (USD)
+costSlope = slope point for the breakeven array (-)
 energyCost = cost for energy requirements (USD/week)
+ftToIn = conversion factor to inches from feet (-)
 laborCost = cost to pay for labor (USD/week)
 landfillCost = cost to remove trash (USD/week)
 maintenanceCost = cost for repairs and upkeep (USD/week)
-miscCosts = any forseeable additional costs (USD/week)
-profitChart = "this is a profit.....chart" (USD/year)
-revenueChart = a table of revenue (USD/year)
+material = array of information for chosen material (-)
+materialCost = price of the material used (USD/ft^3)
+materialList = array of baseline information (-)
+materialName = script for chosen material from menu (-)
+miscCosts = cost of miscellaneous contruction materials (USD)
+profitBreakevenY = location of breakeven point on Y-axis for profit chart (-)
+profitChart = array of profit over time (USD)
+profitSlope = slope point for the profit array (-)
+revenueChart = array of revenue over time (USD)
+revenueSlope = slope point for the breakeven array (-)
+surfaceArea = predefined surface area of the wall (ft^2)
 ticketPrice = THE price of an admission ticket..no favoritsm (USD)
-wallCost = Cost for constructing wall, based on material used (USD)
-wallThickness = wall thickness based on material (inches)
-weeklyCost = cost per week (USD/week)
-weeklyDonations = amount of donations (USD/week)
-weeklySales = income for weekly sales (USD/week)
-weeklyVisitors = vistiors (people/week)
-weeksOpen = number of weeks open (#/year)
-workerCost = total cost of labor to complete construction (USD)
-workerCount = number of workers needed to complete construction (#)
-workerPay = amount the workers get paid (USD)
+wallCost = Total cost for constructing wall, based on material used (USD)
+wallThickness = wall thickness based on material used (inches)
+wallTotalCost = array for the cost of the wall (-)
+weeklyCost = Total cost per week (USD/week)
+weeklyDonations = Amount of estimated donations (USD/week)
+weeklyRevenue = Total revenue (USD/week)
+weeklyVisitors = Number of visitors per week (customers/week)
+weeksOpen = Number of weeks a year the zoo is open (weeks/year)
+workerCost = Total cost of labor to complete construction (USD)
+workerCount = Number of workers needed to complete construction (workers)
+workerPay = Amount the workers get paid (USD/week)
+yearsRequested = number of years the analysis will run for (years)
+yearToMonth = conversion factor for years to months (-)
 %} 
 
 % Baseline information
@@ -41,9 +57,9 @@ materialList = {'Concrete' 16 30 96000 900 5 5;
 
 choice = menu('Wall Material', materialList{:,1}); % Creating the menu
 
-material = materialList(choice,:);  % setting the variable for material from selection
+material = materialList(choice,:);  % Setting the variable for material from selection
 
-surfaceArea = 3000; % problem defined set value
+surfaceArea = 3000; % Predifined value for surface area
 
 % Conversion Factors
 ftToIn = 12;
@@ -59,6 +75,7 @@ workerCount = material{6};
 constructionTime = material{7};
 
 % Questions for user input
+fprintf('Please answer the following questions for your analysis. \n\n');
 energyCost = input('Energy cost [$/week]: ');
 laborCost = input('Labor cost [$/week]: ');
 maintenanceCost = input('Maintence cost [$/week]: ');
@@ -86,13 +103,14 @@ breakevenDonation = constructionCost - ((weeklyRevenue - weeklyCost) * yearToMon
 
 % Outputing the results for review
 clc % clean the command window to show only results
+fprintf('According to the information provided, here is your breakeven analysis for %s construction. \n\n\n', materialName);
 fprintf('Material: %s\n', materialName); 
-fprintf('\t Operating %0.0f weeks per year will generate:\n',weeksOpen);
+fprintf('\t Operating %0.0f weeks per year would generate:\n',weeksOpen);
 fprintf('\t \t Revenue: \t $%0.0f per year\n', weeklyRevenue);
 fprintf('\t \t Cost: \t \t $%0.0f per year\n', weeklyCost);
-fprintf('\t The breakeven time would occur in %0.2f months\n',breakevenOne);
+fprintf('\t The breakeven point would occur in %0.2f months\n',breakevenOne);
 fprintf('\t The total profit after %0.0f years would be $%0.3e\n\n', analysisLength, profitChart(end))
-fprintf('It will take a one-time donation of $%0.2f to breakeven in seven months.\n', breakevenDonation);
+fprintf('It would take a one-time donation of $%0.2f to break even in seven months.\n', breakevenDonation);
 
 % Preparing the Charts
 % Setting the line to be used for total cost
@@ -101,18 +119,15 @@ wallTotalCost = (constructionCost) + costChart;
 % calculating the slope for the lines
 costSlope = (wallTotalCost(end)-wallTotalCost(1))/(analysisLength);
 revenueSlope = (revenueChart(end)-revenueChart(1))/(analysisLength);
-
 % calculating the breakeven point position
 breakevenX = constructionCost/(revenueSlope-costSlope);
 breakevenY = (revenueSlope*breakevenX);
-
 % Plotting the data
 plot(yearsRequested, wallTotalCost, yearsRequested, revenueChart);
 hold on; % keep first plot for the following
 plot(breakevenX, breakevenY, 'k.', 'MarkerSize', 20);
-
 % Labeling the plot
-title('Cost/Revenue Chart');
+title('Cost and Revenue vs Time Chart');
 xlabel('Years');
 ylabel('$ Millions');
 grid on; % showing gridlines
@@ -122,10 +137,8 @@ hold off;
 % adding the second plot as a figure
 figure;
 profitSlope = revenueSlope-costSlope; % setting the slope
-
 % calculating the breakeven point for this figure
 profitBreakevenY = profitSlope*breakevenX;
-
 % plotting the data
 plot(yearsRequested, profitChart);
 hold on; % keep first plot for this figure for the following
